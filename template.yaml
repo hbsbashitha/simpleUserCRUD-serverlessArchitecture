@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+  
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 512
+
+Resources:
+  GetUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.getUsersHandler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        TestApiResource:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: get
+
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.createUserHandler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        TestApiResource:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: post
+  
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.updateUserHandler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        TestApiResource:
+          Type: Api
+          Properties:
+            Path: /users/{id}
+            Method: put
+  
+  DeleteUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.deleteUserHandler
+      Runtime: nodejs14.x
+      Policies: AmazonDynamoDBFullAccess
+      Architectures:
+        - x86_64
+      Events:
+        TestApiResource:
+          Type: Api
+          Properties:
+            Path: /users/{id}
+            Method: delete
+
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: users_table
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
